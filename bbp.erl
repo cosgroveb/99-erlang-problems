@@ -5,8 +5,9 @@
 -export([flatten/1]).
 -export([distinct/1]).
 % -export([pack/1]).
+-export([encode/1]).
 
-%% 1.04 
+%% 1.04
 len([]) -> 0;
 len(L) -> inner_len(L, 0).
 
@@ -63,3 +64,16 @@ distinct([H,S|T]) when H == S -> distinct(T).
 % pack([H,S|[]]) when H == S -> [[H, S]];
 % pack([H,S|Tail]) when H /= S -> case aux_pack([S] ++ Tail)
 
+%% 1.10
+encode([]) -> [];
+encode([H|[]]) -> [[1, H]];
+encode([H,S|T]) when H == S -> encode([S] ++ T, 1);
+encode([H,S|T]) when H /= S -> [[1, H]] ++ encode([S] ++ T);
+encode([H|[Last|[]]]) when H == Last -> [[2, H]];
+encode([H|[Last|[]]]) when H /= Last -> [[1, H], [1, Last]].
+
+encode([H|[]], Len) -> [[Len + 1, H]];
+encode([H,S|T], Len) when H == S -> encode([S] ++ T, Len + 1);
+encode([H,S|T], Len) when H /= S -> [[Len, H]] ++ encode([S] ++ T);
+encode([H|[Last|[]]], Len) when H == Last -> [[Len + 1, Last]];
+encode([H|[Last|[]]], Len) when H /= Last -> [[Len, H], [1, Last]].
