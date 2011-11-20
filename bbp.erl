@@ -1,5 +1,6 @@
 -module(bbp).
 -export([last/1]).
+-export([penultimate/1]).
 -export([len/1]).
 -export([reverse/1]).
 -export([is_palindrome/1]).
@@ -8,24 +9,30 @@
 % -export([pack/1]).
 -export([encode/1]).
 
-%% 1.01
+%% 1.01 Find the last element of a list
 last([]) -> [];
 last([_,S|T]) -> last([S] ++ T);
 last([Last|[]]) -> Last.
 
-%% 1.04
+%% 1.02 Find the second to last element of a list
+penultimate([]) -> "undefined";
+penultimate([_|[]]) -> "undefined";
+penultimate([P|[_|[]]]) -> P;
+penultimate([_|[S|T]]) -> penultimate([S] ++ T).
+
+%% 1.04 Find the length of a list
 len([]) -> 0;
 len(L) -> inner_len(L, 0).
 
 inner_len([_|[]], C) -> C+1;
 inner_len([_|T], C) -> inner_len(T, C+1).
 
-%% 1.05
+%% 1.05 Reverse a list
 reverse([]) -> [];
 reverse([H|[]]) -> [H];
 reverse([H|T]) -> reverse(T) ++ [H].
 
-%% 1.06
+%% 1.06 Determine if a list is a palindrome
 is_palindrome([]) -> true;
 is_palindrome([_|[]]) -> true;
 
@@ -37,12 +44,12 @@ is_palindrome([Head|Tail]) ->
      false
   end.
 
-%% 1.07
+%% 1.07 Flatten a list of lists
 flatten([]) -> [];
 flatten([H|T]) when is_list(H) == false -> [H] ++ flatten(T);
 flatten([H|T]) when is_list(H) -> flatten(H) ++ flatten(T).
 
-%% 1.08
+%% 1.08 Distinct elements of a list
 distinct([]) -> [];
 distinct([H|[]]) -> [H];
 distinct([H|[Last|[]]]) when H /= Last -> [H, Last];
@@ -50,7 +57,7 @@ distinct([H|[Last|[]]]) when H == Last -> [H];
 distinct([H,S|T]) when H /= S -> [H] ++ distinct(T);
 distinct([H,S|T]) when H == S -> distinct(T).
 
-%% 1.09
+%% 1.09 Pack consecutive elements into a list of lists
 % pack(List) -> case aux_pack(List, []) of
 %     {[],
 %
@@ -70,7 +77,7 @@ distinct([H,S|T]) when H == S -> distinct(T).
 % pack([H,S|[]]) when H == S -> [[H, S]];
 % pack([H,S|Tail]) when H /= S -> case aux_pack([S] ++ Tail)
 
-%% 1.10
+%% 1.10 'Run-length encoding' of a list
 encode([]) -> [];
 encode([H|[]]) -> [[1, H]];
 encode([H,S|T]) when H == S -> encode([S] ++ T, 1);
