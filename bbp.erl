@@ -1,4 +1,5 @@
 -module(bbp).
+-export([last/1]).
 -export([len/1]).
 -export([reverse/1]).
 -export([is_palindrome/1]).
@@ -6,6 +7,11 @@
 -export([distinct/1]).
 % -export([pack/1]).
 -export([encode/1]).
+
+%% 1.01
+last([]) -> [];
+last([_,S|T]) -> last([S] ++ T);
+last([Last|[]]) -> Last.
 
 %% 1.04
 len([]) -> 0;
