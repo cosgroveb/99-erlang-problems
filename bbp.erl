@@ -11,14 +11,14 @@
 
 %% 1.01 Find the last element of a list
 last([]) -> [];
-last([_,S|T]) -> last([S] ++ T);
+last([_,S|T]) -> last([S|T]);
 last([Last|[]]) -> Last.
 
 %% 1.02 Find the second to last element of a list
 penultimate([]) -> "undefined";
 penultimate([_|[]]) -> "undefined";
-penultimate([P|[_|[]]]) -> P;
-penultimate([_|[S|T]]) -> penultimate([S] ++ T).
+penultimate([P,_|[]]) -> P;
+penultimate([_,S|T]) -> penultimate([S|T]).
 
 %% 1.04 Find the length of a list
 len([]) -> 0;
@@ -35,7 +35,6 @@ reverse([H|T]) -> reverse(T) ++ [H].
 %% 1.06 Determine if a list is a palindrome
 is_palindrome([]) -> true;
 is_palindrome([_|[]]) -> true;
-
 is_palindrome([Head|Tail]) ->
   case reverse(Tail) of
     [Last|Rest] when Head == Last ->
@@ -45,17 +44,29 @@ is_palindrome([Head|Tail]) ->
   end.
 
 %% 1.07 Flatten a list of lists
-flatten([]) -> [];
-flatten([H|T]) when is_list(H) == false -> [H] ++ flatten(T);
-flatten([H|T]) when is_list(H) -> flatten(H) ++ flatten(T).
+flatten(List) -> case List of
+  [] -> [];
+  [Head|Tail] -> if
+    is_list(Head) -> flatten(Head) ++ flatten(Tail);
+    is_list(Head) == false -> [Head|flatten(Tail)]
+  end
+end.
 
 %% 1.08 Distinct elements of a list
-distinct([]) -> [];
-distinct([H|[]]) -> [H];
-distinct([H|[Last|[]]]) when H /= Last -> [H, Last];
-distinct([H|[Last|[]]]) when H == Last -> [H];
-distinct([H,S|T]) when H /= S -> [H] ++ distinct(T);
-distinct([H,S|T]) when H == S -> distinct(T).
+distinct(List) -> case List of
+  [] -> [];
+  [Head|[]] -> [Head];
+  [Head,Second|[]] ->
+    if
+      Head == Second -> [Head];
+      Head /= Second -> [Head, Second] 
+    end;
+  [Head,Second|Tail] ->
+    if
+      Head == Second -> distinct([Second|Tail]);
+      Head /= Second -> [Head|distinct([Second|Tail])]
+    end
+end.
 
 %% 1.09 Pack consecutive elements into a list of lists
 % pack(List) -> case aux_pack(List, []) of
