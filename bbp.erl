@@ -90,7 +90,6 @@ end.
 
 %% 1.10 'Run-length encoding' of a list 
 encode(List) -> case List of
-  [] -> [];
   [H|[]] -> [[1, H]];
   [Head|[Last|[]]] ->
     if
@@ -105,6 +104,6 @@ encode(List) -> case List of
 end.
 
 encode([H,S|T], L) ->
-  if H == S -> encode([S] ++ T, L + 1);
-     true -> [[L + 1, H]] ++ encode([S] ++ T)
+  if H == S -> encode([S|T], L + 1);
+     true -> [[L + 1, H]] ++ encode([S|T])
 end.
